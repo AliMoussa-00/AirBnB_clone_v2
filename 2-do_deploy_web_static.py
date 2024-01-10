@@ -18,13 +18,11 @@ def do_deploy(archive_path):
             print('File does not exist')
             return False
 
-        archive_arr = archive_path.split('/')
-        archive_full_name = archive_arr[1]
-        archive_arr = archive_full_name.split('.')
-        archive_name = archive_arr[0]
+        archive_full_name = archive_path.split('/')[1]
+        archive_name = archive_full_name.split('.')[0]
 
         # uploding the archive to remote server
-        put(archive_path, "/tmp")
+        put(archive_path, "/tmp/{}".format(archive_full_name))
 
         # path names
         remote_path = f"/data/web_static/releases/{archive_name}"
