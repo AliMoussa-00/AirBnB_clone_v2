@@ -8,19 +8,18 @@ from datetime import datetime
 
 
 def do_pack():
-	"""defining the function"""
-	try:
-		local("mkdir -p versions")
+    """defining the function"""
+    try:
 
-		date = datetime.now()
-		date_str = time.strftime("%Y%m%d%H%M%S")
-		archive_name = f"web_static_{date_str}.tgz"
-		archive_path = f"versions/{archive_name}"
+        local("mkdir -p versions")
 
-		local("tar -czvf versions/{} web_static".format(archive_path))
-		return archive_path
-	except Exception:
-		return None
+        date_str = datetime.now().strftime("%Y%m%d%H%M%S")
 
-if __name__ == "__main__":
-	do_pack()
+        archive_name = f"web_static_{date_str}.tgz"
+        archive_path = f"versions/{archive_name}"
+
+        local("tar -czvf {} web_static".format(archive_path))
+        return archive_path
+
+    except Exception:
+        return None
