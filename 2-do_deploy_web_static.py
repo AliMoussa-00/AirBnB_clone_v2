@@ -14,7 +14,8 @@ def do_deploy(archive_path):
 
     try:
 
-        if not os.path.exists(archive_path):
+        if not (os.path.exists(archive_path)):
+            print('File does not exist')
             return False
 
         archive_arr = archive_path.split('/')
