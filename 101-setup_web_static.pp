@@ -1,60 +1,102 @@
 # seting up your web servers for the deployment of web_static
 
+$config = "server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    
+    add_header X-Served-By ${hostname};
+
+    root   /var/www/html;
+    index  index.html index.htm;
+    location / {
+        try_files ${uri} ${uri}/ =404; 
+    }
+
+    location /hbnb_static {
+        alias /data/web_static/current;
+        index index.html index.htm;
+    }
+
+    location /redirect_me {
+        return 301 http://linktr.ee/firdaus_h_salim/;
+    }
+
+    error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
+    }
+}"
+
 exec {'update':
   provider => shell,
   command  => 'sudo apt-get -y update',
-  before   => Package['nginx'],
 }
 
-package { 'nginx':
+-> package { 'nginx':
 ensure => 'installed',
-before => Exec['add_dir_test'],
 }
 
-exec { 'add_dir_test':
-command  => 'mkdir -p /data/web_static/releases/test/',
-provider => shell,
-before   => Exec['add_dir_shared'],
+-> file { '/data':
+  ensure  => 'directory'
 }
 
-exec { 'add_dir_shared':
-command  => 'mkdir -p /data/web_static/shared/',
-provider => shell,
-before   => File['index'],
+-> file { '/data/web_static':
+  ensure => 'directory'
 }
 
-file { 'index':
-path = '/data/web_static/releases/test/index.html',
-ensure  => present,
-content => 'Hello this is Fake!!',
-before  => File['rm_symbolic']
+-> file { '/data/web_static/releases':
+  ensure => 'directory'
 }
 
-file { 'rm_symbolic':
-path = '/data/web_static/current',
-ensure => absent,
-before => Exec['create_symbolic']
+-> file { '/data/web_static/releases/test':
+  ensure => 'directory'
 }
 
-exec {'create_symbolic':
-command  => 'ln -sf /data/web_static/releases/test/ /data/web_static/current',
-provider => shell,
-before   => Exec['owner'],
+-> file { '/data/web_static/shared':
+  ensure => 'directory'
 }
 
-exec {'owner':
+-> file { '/data/web_static/releases/test/index.html':
+  ensure  => 'present',
+  content => 'Hello this is Fake!!'
+}
+
+-> file { '/data/web_static/current':
+  ensure => 'link',
+  target => '/data/web_static/releases/test'
+}
+
+-> exec {'owner':
 command  => 'chown -hR ubuntu:ubuntu /data',
 provider => shell,
 before   => Exec['conf_nginx'],
 }
 
-exec {'conf_nginx':
-command  => 'sed -i "38i\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default',
-provider => shell,
-before   => Exec['restart_nginx'],
+file { '/var/www':
+  ensure => 'directory'
 }
 
-exec { 'restart_nginx':
+-> file { '/var/www/html':
+  ensure => 'directory'
+}
+
+-> file { '/var/www/html/index.html':
+  ensure  => 'present',
+  content => 'Hello World!'
+}
+
+-> file { '/var/www/html/404.html':
+  ensure  => 'present',
+  content => "Ceci n'est pas une page\n"
+}
+
+-> file { '/etc/nginx/sites-available/default':
+  ensure  => 'present',
+  content => $config
+}
+
+-> exec { 'restart_nginx':
 provider => shell,
 command  => 'sudo service nginx restart',
 }
