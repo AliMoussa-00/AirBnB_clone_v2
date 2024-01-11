@@ -96,7 +96,6 @@ file { '/var/www':
   content => $config
 }
 
--> exec { 'restart_nginx':
-provider => shell,
-command  => 'sudo service nginx restart',
+-> exec { 'nginx restart':
+  path => '/etc/init.d/'
 }
