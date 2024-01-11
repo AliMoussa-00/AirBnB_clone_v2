@@ -12,22 +12,22 @@ before => Exec['add_dir_test'],
 }
 
 exec { 'add_dir_test':
-command => 'mkdir -p /data/web_static/releases/test/',
+command  => 'mkdir -p /data/web_static/releases/test/',
 provider => shell,
-before => Exec['add_dir_shared'],
+before   => Exec['add_dir_shared'],
 }
 
 exec { 'add_dir_shared':
-command => 'mkdir -p /data/web_static/shared/',
+command  => 'mkdir -p /data/web_static/shared/',
 provider => shell,
-before => File['index'],
+before   => File['index'],
 }
 
 file { 'index':
 path = '/data/web_static/releases/test/index.html',
-ensure => present,
+ensure  => present,
 content => 'Hello this is Fake!!',
-before => File['rm_symbolic']
+before  => File['rm_symbolic']
 }
 
 file { 'rm_symbolic':
@@ -37,21 +37,21 @@ before => Exec['create_symbolic']
 }
 
 exec {'create_symbolic':
-command => 'ln -sf /data/web_static/releases/test/ /data/web_static/current',
+command  => 'ln -sf /data/web_static/releases/test/ /data/web_static/current',
 provider => shell,
-before => Exec['owner'],
+before   => Exec['owner'],
 }
 
 exec {'owner':
-command => 'chown -hR ubuntu:ubuntu /data',
+command  => 'chown -hR ubuntu:ubuntu /data',
 provider => shell,
-before => Exec['conf_nginx'],
+before   => Exec['conf_nginx'],
 }
 
 exec {'conf_nginx':
-command => 'sed -i "38i\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default',
+command  => 'sed -i "38i\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default',
 provider => shell,
-before => Exec['restart_nginx'],
+before   => Exec['restart_nginx'],
 }
 
 exec { 'restart_nginx':
