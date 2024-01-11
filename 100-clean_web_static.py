@@ -25,7 +25,7 @@ def do_clean(number=0):
 
     # remote
     with cd('/data/web_static/releases'):
-        archives = run("ls -t").split()[number:]
+        archives = run("ls -rt").split()[number:]
         to_delete = [r for r in archives if "web_static_" in r]
         to_delete = ' '.join(to_delete)
 
