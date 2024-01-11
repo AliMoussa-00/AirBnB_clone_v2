@@ -16,18 +16,16 @@ def do_clean(number=0):
 
     # local
     with lcd('versions/'):
-        archives = sorted(os.listdir("./versions"), reverse=True)[number:]
+        archives = sorted(os.listdir("./versions"))
         to_delete = [r for r in archives if "web_static_" in r]
-        to_delete = ' '.join(to_delete)
+        [to_delete.pop() for a in range(number)]
 
-        if len(to_delete) > number:
-            local("rm -r {}".format(to_delete))
+        [local("rm -r {}".format(a)) for a in to_delete]
 
     # remote
     with cd('/data/web_static/releases'):
-        archives = run("ls -rt").split()[number:]
+        archives = run("ls -rt").split()
         to_delete = [r for r in archives if "web_static_" in r]
-        to_delete = ' '.join(to_delete)
 
-        if len(to_delete) > number:
-            run("rm -r {}".format(to_delete))
+        [to_delete.pop() for a in range(number)]
+        [run("rm -r {}".format(a)) for a in to_delete]
