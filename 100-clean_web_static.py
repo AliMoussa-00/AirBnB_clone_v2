@@ -12,7 +12,7 @@ env.key_filename = "~/.ssh/id_rsa"
 def do_clean(number=0):
     """cleaning the archives"""
 
-    number = 1 if number == 0 else int(number)
+    number = 1 if int(number) == 0 else int(number)
 
     # local
     with lcd('versions/'):
@@ -20,7 +20,7 @@ def do_clean(number=0):
         to_delete = [r for r in archives if "web_static_" in r]
         [to_delete.pop() for a in range(number)]
 
-        [local("rm -r {}".format(a)) for a in to_delete]
+        [local("rm -rf {}".format(a)) for a in to_delete]
 
     # remote
     with cd('/data/web_static/releases'):
@@ -28,4 +28,4 @@ def do_clean(number=0):
         to_delete = [r for r in archives if "web_static_" in r]
 
         [to_delete.pop() for a in range(number)]
-        [run("rm -r {}".format(a)) for a in to_delete]
+        [run("rm -rf {}".format(a)) for a in to_delete]
