@@ -34,7 +34,8 @@ exec {'update':
 }
 
 -> package { 'nginx':
-ensure => 'installed',
+ensure   => 'installed',
+provider => 'apt'
 }
 
 -> file { '/data':
@@ -68,9 +69,8 @@ ensure => 'installed',
 }
 
 -> exec {'owner':
-command  => 'chown -hR ubuntu:ubuntu /data',
-provider => shell,
-before   => Exec['conf_nginx'],
+command => 'chown -R ubuntu:ubuntu /data',
+path    => '/usr/bin/:/usr/local/bin/:/bin/'
 }
 
 file { '/var/www':
@@ -96,6 +96,7 @@ file { '/var/www':
   content => $config
 }
 
--> exec { 'nginx restart':
-  path => '/etc/init.d/'
+-> exec { 'restart nginx':
+provider => shell,
+command  => 'sudo service nginx restart',
 }
