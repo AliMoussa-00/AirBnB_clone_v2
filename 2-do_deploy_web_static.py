@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Fabric script to distributes the archive to our web servers,
 
-from fabric.api import *
+from fabric.api import put, run, env
 import os
 
 env.hosts = ['34.204.101.226', '34.232.76.130']
@@ -50,7 +50,7 @@ def do_deploy(archive_path):
 
         # create a new symbolic link
         run('ln -sf {} /data/web_static/current'.format(remote_path))
-        
+
         print("New version deployed!")
         return True
 
