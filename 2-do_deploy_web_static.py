@@ -18,7 +18,7 @@ def do_deploy(archive_path):
             print('File does not exist')
             return False
 
-        archive_full_name = archive_path.split('/')[1]
+        archive_full_name = archive_path.split('/')[-1]
         archive_name = archive_full_name.split('.')[0]
 
         # uploding the archive to remote server
