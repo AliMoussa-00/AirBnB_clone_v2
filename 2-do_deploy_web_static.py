@@ -50,7 +50,8 @@ def do_deploy(archive_path):
 
         # create a new symbolic link
         run('ln -sf {} /data/web_static/current'.format(remote_path))
-
+        
+        print("Deployment failed!")
         return True
 
     except Exception:
