@@ -18,7 +18,10 @@ def do_clean(number=0):
     with lcd('versions/'):
         archives = sorted(os.listdir("./versions"))
         to_delete = [r for r in archives if "web_static_" in r]
-        [to_delete.pop() for a in range(number)]
+
+        for a in range(number):
+            if len(to_delete) > 1:
+                to_delete.pop()
 
         [local("rm -rf {}".format(a)) for a in to_delete]
 
@@ -27,5 +30,8 @@ def do_clean(number=0):
         archives = run("ls -rt").split()
         to_delete = [r for r in archives if "web_static_" in r]
 
-        [to_delete.pop() for a in range(number)]
+        for a in range(number):
+            if len(to_delete) > 1:
+                to_delete.pop()
+
         [run("rm -rf {}".format(a)) for a in to_delete]
