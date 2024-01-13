@@ -12,11 +12,10 @@ env.key_filename = "~/.ssh/id_rsa"
 def do_deploy(archive_path):
     """Deploy / decompresse archive"""
 
-    try:
+    if not (os.path.exists(archive_path)):
+        return False
 
-        if not (os.path.exists(archive_path)):
-            print('File does not exist')
-            return False
+    try:
 
         archive_full_name = archive_path.split('/')[-1]
         archive_name = archive_full_name.split('.')[0]
@@ -25,8 +24,8 @@ def do_deploy(archive_path):
         put(archive_path, "/tmp/{}".format(archive_full_name))
 
         # path names
-        remote_path = f"/data/web_static/releases/{archive_name}"
-        tmp_path = f"/tmp/{archive_full_name}"
+        remote_path = "/data/web_static/releases/{}".format(archive_name)
+        tmp_path = "/tmp/{}".format(archive_full_name)
 
         # creating the remote dir
         run('mkdir -p {}'.format(remote_path))
@@ -51,9 +50,6 @@ def do_deploy(archive_path):
 
         # create a new symbolic link
         run('ln -sf {} /data/web_static/current'.format(remote_path))
-
-        # restart nginx service
-        #run('sudo service nginx restart')
 
         return True
 
