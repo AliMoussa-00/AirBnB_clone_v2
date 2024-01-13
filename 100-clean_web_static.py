@@ -14,24 +14,14 @@ def do_clean(number=0):
 
     number = 1 if int(number) == 0 else int(number)
 
-    # local
-    with lcd('versions/'):
-        archives = sorted(os.listdir("./versions"))
-        to_delete = [r for r in archives if "web_static_" in r]
+    archives = sorted(os.listdir("versions"))
+    [archives.pop() for i in range(number)]
 
-        for a in range(number):
-            if len(to_delete) > 1:
-                to_delete.pop()
+    with lcd("versions"):
+        [local("rm ./{}".format(a)) for a in archives]
 
-        [local("rm -rf {}".format(a)) for a in to_delete]
-
-    # remote
-    with cd('/data/web_static/releases'):
-        archives = run("ls -rt").split()
-        to_delete = [r for r in archives if "web_static_" in r]
-
-        for a in range(number):
-            if len(to_delete) > 1:
-                to_delete.pop()
-
-        [run("rm -rf {}".format(a)) for a in to_delete]
+    with cd("/data/web_static/releases"):
+        archives = run("ls -tr").split()
+        archives = [a for a in archives if "web_static_" in a]
+        [archives.pop() for i in range(number)]
+        [run("rm -rf ./{}".format(a)) for a in archives]
