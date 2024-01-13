@@ -53,7 +53,7 @@ def do_deploy(archive_path):
         run('ln -sf {} /data/web_static/current'.format(remote_path))
 
         # restart nginx service
-        run('sudo service nginx restart')
+        #run('sudo service nginx restart')
 
         return True
 
